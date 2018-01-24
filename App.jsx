@@ -26,7 +26,7 @@ class App extends React.Component {
 
     componentWillMount(){
         let currentuser = JSON.parse(localStorage.getItem('currentuser'));
-        if(currentuser.isLoggedin){
+        if(currentuser&&currentuser.isLoggedin){
             this.setState({currentuser:{isLoggedin:true}});
         }
     }
