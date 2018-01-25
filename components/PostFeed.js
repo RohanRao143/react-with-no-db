@@ -6,6 +6,7 @@ import {withStyles} from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import {Redirect} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 //import base64ToImage from 'base64-to-image';
 import UploadScreen from './UploadScreen';
@@ -47,19 +48,31 @@ class PostFeed extends React.Component{
         if(this.state.post) {
             let users = JSON.parse(localStorage.getItem('users'));
             let currentuser = JSON.parse(localStorage.getItem('currentuser'));
+            let months = [
+                'January', 'february', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+                'October', 'November', 'December'];
             let x = users.map((person) => {
                 let user = Object.assign({},person);
                 if (user.email == currentuser.username && user.password == currentuser.password){
                     if (!user.posts) {
                         user.posts = [];
                     }
+                    let date = new Date();
+                    let temp = date.getMonth();
+                    temp = months[temp];
+                    let postTime = ''+temp;
+                    temp = date.getDate();
+                    postTime = postTime + ' '+ temp;
+                    temp = date.getFullYear();
+                    postTime = postTime +', '+temp;
                     let post = {
                         images: [
                             {image: this.state.image1, ext: this.state.e1},
                             {image: this.state.image2, ext: this.state.e2}
                         ],
                         share: this.state.privacy.ShareType,
-                        post: this.state.post
+                        post: this.state.post,
+                        time:postTime
                     };
                     user.posts.push(post);
                 }
@@ -67,6 +80,7 @@ class PostFeed extends React.Component{
             });
             x= JSON.stringify(x);
             localStorage.setItem('users',x);
+            this.props.history.push("/homefeeds")
         }else{
             alert("post must not be empty")
         }
@@ -209,4 +223,4 @@ class PostFeed extends React.Component{
     }
 }
 
-export default withStyles(styles)(PostFeed);
+export default withRouter(withStyles(styles)(PostFeed));

@@ -47,20 +47,30 @@ class SignUp extends Component {
     }
 
     submitData(){
-        if(localStorage.getItem('users')){
-            let users = localStorage.getItem('users');
-            users = JSON.parse(users);
-            let newUser = localStorage.getItem('formData');
-            users.push(JSON.parse(newUser));
-            users = JSON.stringify(users);
-            localStorage.setItem('users', users);
-        } else{
-            let newUser = JSON.parse(localStorage.getItem('formData'));
-            let users = new Array();
-            users.push(newUser);
-            users = JSON.stringify(users);
-           localStorage.setItem('users', users);
+        let user = this.state;
+        if(user.firstname==''||user.lastname==''||user.email==''||user.phone==''||
+            user.password==''||user.confirmpassword==''){
+            alert('Fields cannot be empty');
+            return false;
         }
+        if(user.password!=user.confirmpassword){
+            alert("password should match with confirm password");
+        }
+            if (localStorage.getItem('users')) {
+                let users = localStorage.getItem('users');
+                users = JSON.parse(users);
+                let newUser = localStorage.getItem('formData');
+                users.push(JSON.parse(newUser));
+                users = JSON.stringify(users);
+                localStorage.setItem('users', users);
+            } else {
+                let newUser = JSON.parse(localStorage.getItem('formData'));
+                let users = new Array();
+                users.push(newUser);
+                users = JSON.stringify(users);
+                localStorage.setItem('users', users);
+        }
+
     }
     handleFirstNameChange(event){
         this.setState({firstname:event.target.value}, ()=>{
@@ -126,7 +136,7 @@ class SignUp extends Component {
                             id="mobilenumber"
                             label="Phone Number"
                             className={classes.textField}
-                            type="text"
+                            type="number"
                             autoComplete="current-text"
                             margin="normal"
                             onChange={this.handlePhoneChange}
@@ -137,7 +147,7 @@ class SignUp extends Component {
                             id="email"
                             label="Email Id"
                             className={classes.textField}
-                            type="text"
+                            type="email"
                             autoComplete="current-text"
                             margin="normal"
                             onChange={this.handleEmailChange}
