@@ -8,8 +8,6 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import {Redirect} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 
-//import base64ToImage from 'base64-to-image';
-import UploadScreen from './UploadScreen';
 
 const styles = (theme)=>({
     root: {
@@ -72,7 +70,9 @@ class PostFeed extends React.Component{
                         ],
                         share: this.state.privacy.ShareType,
                         post: this.state.post,
-                        time:postTime
+                        time:postTime,
+                        liked:false,
+                        id:user.posts.length
                     };
                     user.posts.push(post);
                 }
@@ -151,13 +151,15 @@ class PostFeed extends React.Component{
         }
         return(
             <div className={classes.root}>
+                <div style={{marginTop:100}}>
+                </div>
                 <Grid container spacing={24}>
                     <Grid item style={{paddingLeft:325, paddingTop:1,fontSize:19}} xs={4}>
                         <p>Share Type:</p>
                     </Grid>
                     <Grid item xs={8} >
                         <Button
-                            style={{background:"#c9a78b", position:"relative",paddingLeft:15}}
+                            style={{background:"#63c1d8", position:"relative",marginLeft:2}}
                             aria-owns={anchorEl ? 'simple-menu' : null}
                             aria-haspopup="true"
                             onClick={this.handleClick}>

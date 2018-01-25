@@ -36,7 +36,12 @@ class ButtonAppBar extends React.Component{
         this.createFeed = this.createFeed.bind(this);
     }
 
+    showFeeds(){
+        this.props.history.push('/homefeeds')
+    }
+
     createFeed(){
+        this.setState({isPostfeed:true});
         this.props.history.push("/postfeed")
     }
 
@@ -62,11 +67,12 @@ class ButtonAppBar extends React.Component{
             this.setState({isLoggedin:false});
         }
     }
+
     render() {
         const { classes } = this.props;
         return (
             <div className={classes.root} color="default">
-                <AppBar position="static" style={{background:"#198ea8"}}>
+                <AppBar position="static" style={{background:"#198ea8",position: "fixed", top: 0,}}>
                     <Toolbar>
                         <Typography type="title" color="inherit" className={classes.flex}>
                             {!this.state.isLoggedin?
@@ -82,15 +88,27 @@ class ButtonAppBar extends React.Component{
                             <ModeEditIcon />
                             </Button></div>:''}
                         <div className={classes.button}
-                             style={{background:"#0000FF",borderRadius:5}}>
-                            <Link style={{ textDecoration: 'none',}} to={"/homefeeds"}>
-                                <Button><div style={{color:"white"}}>Home Feeds</div></Button>
-                            </Link>
+                             style={{background:"#094bba",borderRadius:5}}>
+                                <Button style={{color:"white"}} onClick={this.showFeeds.bind(this)}>
+                                    Home Feeds
+                                </Button>
                         </div>
-                        {this.state.isLoggedin?<div>
-                            <div className={classes.button} style={{background:"#b25e64",borderRadius:5}}><Button onClick={this.handleSignOut}>Sign out</Button></div>
-                        </div>:(<div><Link to={"/signup"}><Button>Sign up</Button></Link>
-                            <Link to={"/signin"}><Button>Login</Button></Link></div>)}
+                        {this.state.isLoggedin?
+                            <div className={classes.button} style={{background:"#094bba",borderRadius:5}}>
+                                <Button onClick={this.handleSignOut} style={{color:"white"}}>
+                                    Sign out
+                                </Button>
+                            </div>:
+                            (<div><Link style={{ textDecoration: 'none',}} to={"/signup"}>
+                                <Button className={classes.button}
+                                        style={{background:"#094bba",borderRadius:5,color:"white"}}>
+                                Sign up
+                            </Button></Link>
+                            <Link style={{ textDecoration: 'none',}} to={"/signin"}>
+                                <Button className={classes.button}
+                                        style={{margin:3,background:"#094bba",borderRadius:5, color:"white"}}>
+                                Login
+                            </Button></Link></div>)}
                     </Toolbar>
                 </AppBar>
             </div>

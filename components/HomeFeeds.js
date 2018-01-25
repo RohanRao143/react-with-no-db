@@ -7,14 +7,17 @@ import red from 'material-ui/colors/red';
 import Avatar from 'material-ui/Avatar';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
-import MoreVertIcon from 'material-ui-icons/MoreVert';
 import FavoriteIcon from 'material-ui-icons/Favorite';
 import ShareIcon from 'material-ui-icons/Share';
-import Image from './images';
+import PublicIcon from 'material-ui-icons/Public'
 import Grid from 'material-ui/Grid';
+import SecurityIcon from 'material-ui-icons/Security'
 
 
 const styles = theme => ({
+    like:{
+        color:"red"
+    },
     card: {
         maxWidth: 600,
         margin:15,
@@ -38,12 +41,25 @@ class HomeFeeds extends React.Component{
         this.state = {
             username:'',
             isLoggedin:false,
-            posts:[],
-            image:Image.imageData
+            posts:[]
         };
+        this.likePost = this.likePost.bind(this);
     }
 
-    componentWillMount  (){
+    likePost(id) {
+        let {posts} = this.state;
+        let newPosts = posts.map((post)=>{
+            if(post.id==id){
+                post.liked = (!post.liked);
+                console.log(post)
+                return post
+            }
+            return post;
+        });
+        this.setState({posts:newPosts})
+    }
+
+    componentWillMount(){
         let user = JSON.parse(localStorage.getItem('currentuser'));
         if(user) {
             if (user.isLoggedin) {
@@ -56,27 +72,33 @@ class HomeFeeds extends React.Component{
         }
         let users = JSON.parse(localStorage.getItem('users'));
         let posts = users.map((person)=>{
-            if(user.username==person.email && user.password==person.password){
-                this.setState({username:(person.firstname+' '+person.lastname)});
+            if(user&&user.username==person.email && user.password==person.password){
+                this.setState({username:(person.firstname[0].toUpperCase()+
+                    person.firstname.slice(1)+' '+person.lastname)});
                 return person;
             }
         });
-        posts = posts[0];
-        posts = posts.posts;
-        posts.map((post)=>{
-            let x={};
-            x.images = [];
-            if(post.images[0].image){
-                x.images.push(post.images[0].image);
-            }
-            if(post.images[1].image){
-                x.images.push(post.images[0].image);
-            }
-            x.content = post.post;
-            x.shareType = post.share;
-            x.time = post.time;
-            this.state.posts.push(x);
-         });
+        if(posts[0]){
+            console.log(posts)
+            posts = posts[0];
+            posts = posts.posts;
+            posts.map((post)=>{
+                let x={};
+                x.images = [];
+                if(post.images[0].image){
+                    x.images.push(post.images[0].image);
+                }
+                if(post.images[1].image){
+                    x.images.push(post.images[0].image);
+                }
+                x.content = post.post;
+                x.shareType = post.share;
+                x.time = post.time;
+                x.id = post.id;
+                x.liked = post.liked;
+                this.state.posts.push(x);
+            });
+        }
         console.log(this.state)
     }
 
@@ -90,6 +112,7 @@ class HomeFeeds extends React.Component{
         let { posts } = this.state;
         return(
             <div>
+                <div style={{marginTop:70}}></div>
                 { posts.map((post,i)=>{
                     return <Card key={i} className={classes.card}>
                         <CardHeader
@@ -99,8 +122,8 @@ class HomeFeeds extends React.Component{
                                 </Avatar>
                             }
                             action={
-                                <IconButton>
-                                    <MoreVertIcon />
+                                <IconButton aria-label="ShareType">
+                                    {post.shareType=='Private'?<SecurityIcon />:<PublicIcon />}
                                 </IconButton>
                             }
                             title={this.state.username}
@@ -117,24 +140,25 @@ class HomeFeeds extends React.Component{
                             title="Contemplative Reptile"
                         >
                             <Grid container spacing={24}>
-                                {post.images.map((image)=>{
+                                {post.images.map((image,i)=>{
                                     if(post.images.length==2){
-                                        return <Grid item justify="center" xs={6} >
+                                        return <Grid key={i} item justify="center" xs={6} >
                                             <img height="250" width="290" src={image}/>
                                         </Grid>
                                     }else if(post.images.length==1){
-                                        return<Grid item style={{paddingLeft:20}} xs={12}>
+                                        return<Grid key={i} item style={{paddingLeft:20}} xs={12}>
                                             <img height="280" width="580" src={image} />
                                             </Grid>
                                     }else{}
                                 })}
                             </Grid>
-                            {console.log(post.images)}
                         </CardMedia>:''}
                         {post.images.length>0?<div  style={{marginTop:90}}>
                             <CardActions className={classes.actions} disableActionSpacing>
                                 <IconButton aria-label="Add to favorites">
-                                    <FavoriteIcon />
+                                        <FavoriteIcon
+                                            onClick={() => {this.likePost(post.id)}}
+                                            className={post.liked?classes.like:''}/>
                                 </IconButton>
                                 <IconButton aria-label="Share">
                                     <ShareIcon />
@@ -142,7 +166,9 @@ class HomeFeeds extends React.Component{
                             </CardActions>
                         </div>: <CardActions className={classes.actions} disableActionSpacing>
                                 <IconButton aria-label="Add to favorites">
-                                    <FavoriteIcon />
+                                    <FavoriteIcon
+                                        className={post.liked?classes.like:''}
+                                        onClick={() => {this.likePost(post.id)}}/>
                                 </IconButton>
                                 <IconButton aria-label="Share">
                                     <ShareIcon />

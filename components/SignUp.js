@@ -4,6 +4,7 @@ import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
+import {withRouter} from 'react-router-dom';
 
 const styles = theme => ({
     container: {
@@ -59,18 +60,29 @@ class SignUp extends Component {
             if (localStorage.getItem('users')) {
                 let users = localStorage.getItem('users');
                 users = JSON.parse(users);
+                var isUserAlreadyExists = false;
+                users.map((user)=>{
+                   if(user.email==this.state.email){
+                       isUserAlreadyExists = true;
+                   }
+                });
+                if(isUserAlreadyExists){
+                    alert("Someone has already been registered with this username");
+                    return false;
+                }
                 let newUser = localStorage.getItem('formData');
                 users.push(JSON.parse(newUser));
                 users = JSON.stringify(users);
                 localStorage.setItem('users', users);
             } else {
                 let newUser = JSON.parse(localStorage.getItem('formData'));
-                let users = new Array();
+                console.log(newUser)
+                let users = [];
                 users.push(newUser);
                 users = JSON.stringify(users);
                 localStorage.setItem('users', users);
         }
-
+        this.props.history.push('/signin')
     }
     handleFirstNameChange(event){
         this.setState({firstname:event.target.value}, ()=>{
@@ -107,7 +119,7 @@ class SignUp extends Component {
     render() {
         const { classes } = this.props;
         return (
-            <form className={classes.container} noValidate autoComplete="off">
+            <form className={classes.container} noValidate autoComplete="off" style={{marginTop:70}}>
                 <Grid container justify="center">
                 <Grid item xl={12} container justify="center">
                         <TextField

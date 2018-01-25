@@ -39,25 +39,37 @@ class SignIn extends Component {
     }
 
     handleSubmit(){
+        if(this.state.username=='' || this.state.password==''){
+            alert("Fields cannot be empty.");
+            return false
+        }
         let users = localStorage.getItem('users');
-        users = JSON.parse(users);
-        users.map((user)=>{
-            if(user.email == this.state.username){
-                if(user.password == this.state.password){
-                    this.state.isLoggedin = true;
+        if(users) {
+            users = JSON.parse(users);
+            console.log(users)
+            users.map((user) => {
+                if (user.email == this.state.username&&user.password == this.state.password) {
+                        this.state.isLoggedin = true;
                 }
+            });
+            if(!this.state.isLoggedin){
+                alert("username or password is incorrect")
             }
-        });
-        let currentuser = JSON.stringify(this.state);
-        localStorage.setItem('currentuser', currentuser);
-        if(this.state.isLoggedin){
-            this.props.isLoggedin();
-            this.props.history.push("/homefeeds");
+            let currentuser = JSON.stringify(this.state);
+            localStorage.setItem('currentuser', currentuser);
+            if (this.state.isLoggedin) {
+                this.props.isLoggedin();
+                this.props.history.push("/homefeeds");
+            }
+        }else{
+            alert("You have to Sign-Up to login.")
         }
     }
+
     handleUsernameChange(event){
         this.setState({username:event.target.value});
     }
+
     handlePasswordChange(event){
         this.setState({password:event.target.value});
     }
@@ -65,21 +77,23 @@ class SignIn extends Component {
         const { classes } = this.props;
 
         return (
-            <form className={classes.container} noValidate autoComplete="off">
+            <form className={classes.container} noValidate autoComplete="off" style={{marginTop:70}}>
                 <Grid container justify="center">
                     <Grid item xl={12} justify="center">
                         <TextField
-                        id="username"
-                        label="Username"
-                        className={classes.textField}
-                        type="text"
-                        autoComplete="current-text"
-                        margin="normal"
-                        onChange={this.handleUsernameChange}
+                            required
+                            id="email"
+                            label="Email"
+                            className={classes.textField}
+                            type="email"
+                            autoComplete="current-text"
+                            margin="normal"
+                            onChange={this.handleUsernameChange}
                          />
                 </Grid>
                     <Grid item xs={12} container justify="center">
                         <TextField
+                            required
                             id="password"
                             label="Password"
                             className={classes.textField}
